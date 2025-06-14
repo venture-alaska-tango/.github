@@ -36,9 +36,13 @@ jobs:
       - name: Get PR files
         id: pr-files
         run: |
-          FILES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ steps.pr-vars.outputs.repo }}/pulls/${{ steps.pr-vars.outputs.pr_number }}/files" | \
-            jq -r '[.[].filename] | @json')
+          echo "Fetching PR files for repo: ${{ steps.pr-vars.outputs.repo }}, PR: ${{ steps.pr-vars.outputs.pr_number }}"
+          API_RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ steps.pr-vars.outputs.repo }}/pulls/${{ steps.pr-vars.outputs.pr_number }}/files")
+          echo "API Response:"
+          echo "$API_RESPONSE"
+          echo "---"
+          FILES=$(echo "$API_RESPONSE" | jq -r '[.[].filename] | @json')
           if [ -z "$FILES" ]; then
             echo "Error: Failed to fetch or parse PR files."
             exit 1
