@@ -1,0 +1,7 @@
+{
+  "name": "Devin PR Review Automation",
+  "description": "Automated PR review workflow using Devin API with Tango-specific requirements",
+  "iconName": "octicon code-review",
+  "categories": ["Automation", "Code Quality"],
+  "filePatterns": [".*"]
+}
