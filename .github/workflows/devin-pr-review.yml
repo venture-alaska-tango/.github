@@ -35,38 +35,17 @@ jobs:
             echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Get PR files
-        id: pr-files
+      - name: Prepare Devin Review
+        id: prepare-review
         run: |
-          echo "Fetching PR files for repo: ${{ steps.pr-vars.outputs.repo }}, PR: ${{ steps.pr-vars.outputs.pr_number }}"
-          API_RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ steps.pr-vars.outputs.repo }}/pulls/${{ steps.pr-vars.outputs.pr_number }}/files")
-          echo "API Response:"
-          echo "$API_RESPONSE"
-          echo "---"
-          
-          # Check if API response contains an error
-          if echo "$API_RESPONSE" | jq -e '.message' > /dev/null 2>&1; then
-            echo "Error: GitHub API returned an error response"
-            echo "Message: $(echo "$API_RESPONSE" | jq -r '.message')"
-            echo "Status: $(echo "$API_RESPONSE" | jq -r '.status // "unknown"')"
-            echo "This likely indicates insufficient permissions for cross-repository access"
-            echo "The workflow needs organization-level permissions or a different authentication method"
-            exit 1
-          fi
-          
-          FILES=$(echo "$API_RESPONSE" | jq -r '[.[].filename] | @json')
-          if [ -z "$FILES" ]; then
-            echo "Error: Failed to fetch or parse PR files."
-            exit 1
-          fi
-          echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "Preparing Devin review for repo: ${{ steps.pr-vars.outputs.repo }}, PR: ${{ steps.pr-vars.outputs.pr_number }}"
+          echo "Devin will clone the repository and fetch PR files directly to bypass cross-repo API limitations"
+          echo "review-ready=true" >> $GITHUB_OUTPUT
 
       - name: Create Devin Review Session
         id: devin-review
         env:
           DEVIN_API_KEY: ${{ secrets.DEVIN_API_KEY }}
-          FILES_TO_REVIEW: ${{ steps.pr-files.outputs.files }}
         run: |
           PROMPT="You are PR Reviewer Devin with a focus on detailed inline code feedback. Your tasks:
           1. Clone the repository ${{ steps.pr-vars.outputs.repo }} locally.
