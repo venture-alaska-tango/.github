@@ -11,6 +11,8 @@ permissions:
   contents: read
   pull-requests: write
   issues: read
+  actions: read
+  metadata: read
 
 jobs:
   review-pr:
@@ -42,6 +44,17 @@ jobs:
           echo "API Response:"
           echo "$API_RESPONSE"
           echo "---"
+          
+          # Check if API response contains an error
+          if echo "$API_RESPONSE" | jq -e '.message' > /dev/null 2>&1; then
+            echo "Error: GitHub API returned an error response"
+            echo "Message: $(echo "$API_RESPONSE" | jq -r '.message')"
+            echo "Status: $(echo "$API_RESPONSE" | jq -r '.status // "unknown"')"
+            echo "This likely indicates insufficient permissions for cross-repository access"
+            echo "The workflow needs organization-level permissions or a different authentication method"
+            exit 1
+          fi
+          
           FILES=$(echo "$API_RESPONSE" | jq -r '[.[].filename] | @json')
           if [ -z "$FILES" ]; then
             echo "Error: Failed to fetch or parse PR files."
