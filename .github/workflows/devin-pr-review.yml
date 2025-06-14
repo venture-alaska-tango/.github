@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
   repository_dispatch:
-    types: [review-pr]
+    types: [devin-pr-review]
 
 permissions:
   contents: read
