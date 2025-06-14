@@ -48,7 +48,7 @@ jobs:
           DEVIN_API_KEY: ${{ secrets.DEVIN_API_KEY }}
         run: |
           PROMPT_TEMPLATE=$(cat .github/workflows/prompt-template.txt)
-          PROMPT=$(echo "$PROMPT_TEMPLATE" | sed "s/{{REPO}}/${{ steps.pr-vars.outputs.repo }}/g" | sed "s/{{PR_NUMBER}}/${{ steps.pr-vars.outputs.pr_number }}/g")
+          PROMPT=$(echo "$PROMPT_TEMPLATE" | sed "s|{{REPO}}|${{ steps.pr-vars.outputs.repo }}|g" | sed "s|{{PR_NUMBER}}|${{ steps.pr-vars.outputs.pr_number }}|g")
           
           ESCAPED_PROMPT=$(echo "$PROMPT" | jq -Rs .)
           
