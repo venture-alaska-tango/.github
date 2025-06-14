@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
+  repository_dispatch:
+    types: [review-pr]
 
 permissions:
   contents: read
@@ -13,18 +15,29 @@ permissions:
 jobs:
   review-pr:
     runs-on: ubuntu-latest
-    if: github.repository != 'venture-alaska-tango/.github'
+    if: github.event_name == 'repository_dispatch' || github.repository != 'venture-alaska-tango/.github'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Set PR variables
+        id: pr-vars
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "repo=${{ github.event.client_payload.repo }}" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.client_payload.pr_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Get PR files
         id: pr-files
         run: |
           FILES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | \
+            "https://api.github.com/repos/${{ steps.pr-vars.outputs.repo }}/pulls/${{ steps.pr-vars.outputs.pr_number }}/files" | \
             jq -r '[.[].filename] | @json')
           if [ -z "$FILES" ]; then
             echo "Error: Failed to fetch or parse PR files."
@@ -39,9 +52,9 @@ jobs:
           FILES_TO_REVIEW: ${{ steps.pr-files.outputs.files }}
         run: |
           PROMPT="You are PR Reviewer Devin with a focus on detailed inline code feedback. Your tasks:
-          1. Clone the repository ${{ github.repository }} locally.
+          1. Clone the repository ${{ steps.pr-vars.outputs.repo }} locally.
           2. Next, set up a pre-push Git hook that prevents any pushes from a user with the username \"Devin AI\" OR an email containing \"devin-ai-integration\" as a substring. Activate the hook.
-          3. View the diffs of the changed files for PR #${{ github.event.pull_request.number }} in repository ${{ github.repository }}.
+          3. View the diffs of the changed files for PR #${{ steps.pr-vars.outputs.pr_number }} in repository ${{ steps.pr-vars.outputs.repo }}.
           4. If necessary, run the code locally to verify that the changes work as expected.
           5. Read the PR discussion to see what previous comments and suggestions have been made.
           6. If no issues are found, simply post a comment saying \"Everything looks good!\" and approve the PR using the GitHub API.
