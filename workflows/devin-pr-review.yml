@@ -2,7 +2,7 @@ name: Automated PR Review
 
 on:
   pull_request:
-    types: [labeled]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
@@ -11,7 +11,6 @@ permissions:
 
 jobs:
   review-pr:
-    if: ${{ github.event.label.name == 'devin-review' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
