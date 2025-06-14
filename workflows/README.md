@@ -9,10 +9,11 @@ This directory contains GitHub Actions workflow templates for organization-wide 
 ## Devin PR Review Workflow
 
 ### Overview
-Automatically triggers Devin reviews on PR opened, synchronized, and reopened events across all repositories in the organization.
+Automatically triggers Devin reviews on PR opened, synchronized, and reopened events across all repositories in the organization. Also supports manual triggering via workflow_dispatch.
 
 ### Features
 - **Automatic PR Reviews**: Triggers Devin reviews on PR opened, synchronized, and reopened events
+- **Manual Triggering**: Supports manual workflow execution via workflow_dispatch
 - **Organization-wide Deployment**: Designed for deployment via GitHub organization rulesets
 - **Comprehensive Review Process**: 8-step workflow with detailed GitHub API integration
 - **Safety Guardrails**: Pre-push hooks and explicit no-commit rules for Devin
