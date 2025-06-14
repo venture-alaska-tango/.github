@@ -17,7 +17,7 @@ permissions:
 jobs:
   review-pr:
     runs-on: ubuntu-latest
-    if: github.event_name == 'repository_dispatch' || github.repository != 'venture-alaska-tango/.github'
+    if: github.event_name == 'repository_dispatch' || (github.event_name != 'repository_dispatch' && github.repository != 'venture-alaska-tango/.github')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
