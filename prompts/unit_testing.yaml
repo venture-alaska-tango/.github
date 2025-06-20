@@ -24,17 +24,18 @@
   description: "Prompt for Devin to review and enhance existing unit tests based on guidelines."
   target_ai: "Devin"
   details:
-    review_directory: "https://github.com/venture-alaska-tango/eo-push-risk/tree/main/eo_push_risk/training/modules"
+    base_branch_url: "https://github.com/venture-alaska-tango/eo-push-risk/tree/main/eo_push_risk/training/modules"
     example_run: https://github.com/venture-alaska-tango/eo-push-risk/pull/60
   prompt_text: |
     @Devin
     Using the unit-testing-guideline macro defined in the Knowledge tab, do the following:
 
     • Review the guidelines.
-    • Please review {{details.review_directory}} and create a checklist to track if all tests adhere to the provided guideline.
-    • Create a branch based on {{details.review_directory}} using branch-pattern macro defined in the Knowledge tab
+    • Please review {{details.base_branch_url}} and create a checklist to track if all tests adhere to the provided guideline.
+    • Create a branch based on {{details.base_branch_url}} using branch-pattern macro defined in the Knowledge tab
     • If some of the tests are not following the guidelines please fix them.
     • Test all your changes and make sure all tests pass.
     • Create a pull request. Use the coverage summary macro defined in the Knowledge tab, and a useful summary.
     • Assign the PR review to me, copilot and windsurf.
     • If any doubts ask me on slack or through github PR feedback
+  
