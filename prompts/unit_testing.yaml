@@ -1,0 +1,44 @@
+propose a refactoring for @action.yml
+- without breaking backwards compatibility,
+- leveraging the logic implemente in the action bellow by allowing it to be more compact:
+
+- name: "Create Single Module Unit Tests"
+  description: "Prompt for Devin to create unit tests for a specific Python module, following specific guidelines and workflow."
+  target_ai: "Devin"
+  details:
+    module_url: "https://github.com/venture-alaska-tango/eo-push-risk/blob/f5c7c612b39168c891c447b259ba148db6581867/eo_push_risk/feature_engineering/features/text_features.py"
+    destination_test_file: "https://github.com/venture-alaska-tango/eo-push-risk/blob/f5c7c612b39168c891c447b259ba148db6581867/eo_push_risk/tests/feature_engineering/test_text_features.py"
+    base_branch_url: "https://github.com/venture-alaska-tango/eo-push-risk/tree/TNGO-1627-improve-fe"
+    example_run: https://github.com/venture-alaska-tango/eo-push-risk/pull/60
+  prompt_text: |
+    @Devin
+    Please add test for the module {{details.module_url}}. Use this destination test file: {{details.destination_test_file}}.
+
+    Before starting follow these steps:
+
+    • Review and use the unit-testing-guideline macro defined in the Knowledge tab. Create a summary to follow when creating the tests.
+    • Create a branch based on {{details.base_branch_url}} using branch-pattern macro defined in the Knowledge tab
+    • Properly setup your environment with the project available {{details.base_branch_url}}
+    • Create the test, make sure it works and don't break any existing test by executing python -m pytest --cov=./eo_push_risk --cov-report=xml ./eo_push_risk/tests/ -vv
+    • Create a PR to that branch after you have found a useful solution. Use the coverage summary macro defined in the Knowledge tab, and a useful summary
+    • Assign the PR review to me, copilot and windsurf.
+    • If any doubts ask me on slack or through github PR feedback
+
+- name: "Enhance Existing Unit Tests"
+  description: "Prompt for Devin to review and enhance existing unit tests based on guidelines."
+  target_ai: "Devin"
+  details:
+    review_directory: "https://github.com/venture-alaska-tango/eo-push-risk/tree/main/eo_push_risk/training/modules"
+    example_run: https://github.com/venture-alaska-tango/eo-push-risk/pull/60
+  prompt_text: |
+    @Devin
+    Using the unit-testing-guideline macro defined in the Knowledge tab, do the following:
+
+    • Review the guidelines.
+    • Please review {{details.review_directory}} and create a checklist to track if all tests adhere to the provided guideline.
+    • Create a branch based on {{details.review_directory}} using branch-pattern macro defined in the Knowledge tab
+    • If some of the tests are not following the guidelines please fix them.
+    • Test all your changes and make sure all tests pass.
+    • Create a pull request. Use the coverage summary macro defined in the Knowledge tab, and a useful summary.
+    • Assign the PR review to me, copilot and windsurf.
+    • If any doubts ask me on slack or through github PR feedback
