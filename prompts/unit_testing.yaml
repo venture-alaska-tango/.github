@@ -1,7 +1,3 @@
-propose a refactoring for @action.yml
-- without breaking backwards compatibility,
-- leveraging the logic implemente in the action bellow by allowing it to be more compact:
-
 - name: "Create Single Module Unit Tests"
   description: "Prompt for Devin to create unit tests for a specific Python module, following specific guidelines and workflow."
   target_ai: "Devin"
