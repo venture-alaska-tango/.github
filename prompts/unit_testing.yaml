@@ -5,7 +5,7 @@
     module_url: "https://github.com/venture-alaska-tango/eo-push-risk/blob/f5c7c612b39168c891c447b259ba148db6581867/eo_push_risk/feature_engineering/features/text_features.py"
     destination_test_file: "https://github.com/venture-alaska-tango/eo-push-risk/blob/f5c7c612b39168c891c447b259ba148db6581867/eo_push_risk/tests/feature_engineering/test_text_features.py"
     base_branch_url: "https://github.com/venture-alaska-tango/eo-push-risk/tree/TNGO-1627-improve-fe"
-    example_run: https://github.com/venture-alaska-tango/eo-push-risk/pull/60
+    example_run: "https://github.com/venture-alaska-tango/eo-push-risk/pull/60"
   prompt_text: |
     @Devin
     Please add test for the module {{details.module_url}}. Use this destination test file: {{details.destination_test_file}}.
