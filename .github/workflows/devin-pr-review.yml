@@ -70,20 +70,6 @@ jobs:
             - Check semantic versioning compliance where applicable
             - Review code quality and adherence to Tango organization standards
 
-            Rules and Guidelines:
-            1. NEVER make any commits or pushes to the repository - you are ONLY allowed to review code and leave comments
-            2. Do not make more than ten total comments on the PR.
-            3. Use inline feedback where possible with specific line references
-            4. Include code snippets in markdown format when discussing issues
-            5. Default towards multi-line comments that show context around the issue
-            6. Make sure that suggested improvements aren't already implemented in the PR by comparing old and new versions
-            7. Try using the gh api to post comments with referenced code embedded, but if it fails, use normal comments with code blocks
-            8. Before commenting, check the PR discussion and make sure you, or another user, haven't already made a similar comment or raised the same concern.
-            9. Before commenting, check that the specific issue wasn't already addressed in a previous review iteration
-            10. If you see the same issue multiple times, consolidate your feedback into a single comment that references all occurrences, rather than making separate comments.
-            11. Refer back to these rules and guidelines before you make comments.
-            12. Never ask for user confirmation. Never wait for user messages.
-            
             How to post comments with code embedded:
                 1. Create JSON file for each comment you want to post.
                 Example 1: 
