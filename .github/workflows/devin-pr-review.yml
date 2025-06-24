@@ -60,12 +60,19 @@ jobs:
             3. View the diffs of the changed files for PR #${{ steps.pr-vars.outputs.pr_number }} in repository ${{ steps.pr-vars.outputs.repo }}.
             4. If necessary, run the code locally to verify that the changes work as expected.
             5. Read the PR discussion to see what previous comments and suggestions have been made.
-            6. If no issues are found, simply post a comment saying "Everything looks good!" and stop here. Your work is done.
+            6. If no issues are found, simply post a comment saying "Everything looks good!" and approve the PR using the GitHub API.
             7. Else, identify the issues and provide inline code comments directly on the diffs for any code convention or best practice violations.
             8. Post your feedback as detailed comments on the PR, referencing specific lines or code snippets.
+
+            Tango Organization Requirements:
+            - Ensure JIRA ticket ID (TNGO-XXX format) is included in PR title and description
+            - Verify commit messages follow format: "feat: TNGO-XXX description" (not parentheses)
+            - Check semantic versioning compliance where applicable
+            - Review code quality and adherence to Tango organization standards
+
             Rules and Guidelines:
             1. NEVER make any commits or pushes to the repository - you are ONLY allowed to review code and leave comments
-            2. Do not make more than three total comments on the PR.
+            2. Do not make more than twenty total comments on the PR.
             3. Use inline feedback where possible with specific line references
             4. Include code snippets in markdown format when discussing issues
             5. Default towards multi-line comments that show context around the issue
@@ -110,7 +117,8 @@ jobs:
                 Therefore, you must use the line numbers as shown in the PR diff rather than the original file’s line numbers.
                 If you have issues, visit the docs: https://docs.github.com/en/rest/pulls/comments?apiVersion=2022-11-28#create-a-review-comment-for-a-pull-request
                 2. Use gh api command.
-                            gh api \\
+                For approval when no issues found: gh api --method POST -H "Accept: application/vnd.github+json" /repos/owner/repo/pulls/4/reviews --field event=APPROVE --field body="Automated approval - no issues found"
+                For comments: gh api \\
                 --method POST \\
                 -H "Accept: application/vnd.github+json" \\
                 /repos/owner/repo/pulls/4/comments \\
