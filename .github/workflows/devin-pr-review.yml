@@ -72,7 +72,7 @@ jobs:
 
             Rules and Guidelines:
             1. NEVER make any commits or pushes to the repository - you are ONLY allowed to review code and leave comments
-            2. Do not make more than twenty total comments on the PR.
+            2. Do not make more than ten total comments on the PR.
             3. Use inline feedback where possible with specific line references
             4. Include code snippets in markdown format when discussing issues
             5. Default towards multi-line comments that show context around the issue
