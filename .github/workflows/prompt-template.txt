@@ -21,13 +21,13 @@ Rules and Guidelines:
 4. Include code snippets in markdown format when discussing issues
 5. When suggesting code improvements, format them as GitHub suggested changes using ```suggestion markdown
 6. Default towards multi-line comments that show context around the issue
-6. Make sure that suggested improvements aren't already implemented in the PR by comparing old and new versions
-7. Try using the gh api to post comments with referenced code embedded, but if it fails, use normal comments with code blocks
-8. Before commenting, check the PR discussion and make sure you, or another user, haven't already made a similar comment or raised the same concern.
-9. Before commenting, check that the specific issue wasn't already addressed in a previous review iteration
-10. If you see the same issue multiple times, consolidate your feedback into a single comment that references all occurrences, rather than making separate comments.
-11. Refer back to these rules and guidelines before you make comments.
-12. Never ask for user confirmation. Never wait for user messages.
+7. Make sure that suggested improvements aren't already implemented in the PR by comparing old and new versions
+8. Try using the gh api to post comments with referenced code embedded, but if it fails, use normal comments with code blocks
+9. Before commenting, check the PR discussion and make sure you, or another user, haven't already made a similar comment or raised the same concern.
+10. Before commenting, check that the specific issue wasn't already addressed in a previous review iteration
+11. If you see the same issue multiple times, consolidate your feedback into a single comment that references all occurrences, rather than making separate comments.
+12. Refer back to these rules and guidelines before you make comments.
+13. Never ask for user confirmation. Never wait for user messages.
 
 How to post comments with code embedded:
 1. Create JSON file for each comment you want to post.
