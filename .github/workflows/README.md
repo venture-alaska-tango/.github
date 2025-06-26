@@ -14,7 +14,7 @@ Automatically triggers Devin reviews on PR opened, synchronized, and reopened ev
 ### Features
 - **Automatic PR Reviews**: Triggers Devin reviews on PR opened, synchronized, and reopened events
 - **Manual Triggering**: Supports manual workflow execution via workflow_dispatch
-- **Organization-wide Deployment**: Designed for deployment via GitHub organization rulesets
+- **Organization-wide Deployment**: Designed for deployment via GitHub workflow templates
 - **Comprehensive Review Process**: 8-step workflow with detailed GitHub API integration
 - **Safety Guardrails**: Pre-push hooks and explicit no-commit rules for Devin
 - **Error Handling**: Complete API response validation and session management
@@ -33,7 +33,7 @@ Automatically triggers Devin reviews on PR opened, synchronized, and reopened ev
 Uses the existing `DEVIN_API_KEY` organization-level secret for Devin API authentication.
 
 ### Deployment
-This workflow template will be deployed organization-wide via GitHub rulesets, automatically applying to all current and future repositories in the Tango organization.
+This workflow template is deployed organization-wide via GitHub workflow templates in the `workflow-templates/` directory, automatically making it available to all current and future repositories in the Tango organization.
 
 ### Implementation Details
 Based on the proven implementation pattern from Cognition's blog post "Devin 101: Automatic PR Reviews with the Devin API", including:
