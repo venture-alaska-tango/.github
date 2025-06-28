@@ -17,10 +17,12 @@ permissions:
 jobs:
   review-pr:
     runs-on: ubuntu-latest
-    if: github.event_name == 'repository_dispatch' || (github.event_name != 'repository_dispatch' && github.repository != 'venture-alaska-tango/.github')
     steps:
-      - name: Test minimal step
-        run: echo "Minimal test step executed successfully"
+      - name: Test without conditional
+        run: |
+          echo "Testing without conditional logic"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
 
       - name: Checkout code
         uses: actions/checkout@v4
