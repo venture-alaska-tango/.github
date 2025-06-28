@@ -19,6 +19,22 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' || (github.event_name != 'repository_dispatch' && github.repository != 'venture-alaska-tango/.github')
     steps:
+      - name: Debug workflow startup
+        run: |
+          echo "=== WORKFLOW STARTUP DEBUG ==="
+          echo "Event name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Conditional check result: ${{ github.event_name == 'repository_dispatch' || (github.event_name != 'repository_dispatch' && github.repository != 'venture-alaska-tango/.github') }}"
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "Repository dispatch event detected"
+            echo "Client payload repo: ${{ github.event.client_payload.repo }}"
+            echo "Client payload pr_number: ${{ github.event.client_payload.pr_number }}"
+          else
+            echo "Regular PR event detected"
+            echo "PR number: ${{ github.event.pull_request.number }}"
+          fi
+          echo "=== END STARTUP DEBUG ==="
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -27,25 +43,55 @@ jobs:
       - name: Set PR variables
         id: pr-vars
         run: |
+          echo "=== PR VARIABLES DEBUG ==="
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            echo "repo=${{ github.event.client_payload.repo }}" >> $GITHUB_OUTPUT
-            echo "pr_number=${{ github.event.client_payload.pr_number }}" >> $GITHUB_OUTPUT
+            echo "Setting variables from repository_dispatch payload"
+            REPO="${{ github.event.client_payload.repo }}"
+            PR_NUMBER="${{ github.event.client_payload.pr_number }}"
+            echo "Extracted repo: $REPO"
+            echo "Extracted pr_number: $PR_NUMBER"
+            if [ -z "$REPO" ] || [ -z "$PR_NUMBER" ]; then
+              echo "ERROR: Missing required payload data"
+              echo "repo is empty: $([ -z "$REPO" ] && echo 'true' || echo 'false')"
+              echo "pr_number is empty: $([ -z "$PR_NUMBER" ] && echo 'true' || echo 'false')"
+              exit 1
+            fi
+            echo "repo=$REPO" >> $GITHUB_OUTPUT
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           else
-            echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
-            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "Setting variables from regular PR event"
+            REPO="${{ github.repository }}"
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            echo "Extracted repo: $REPO"
+            echo "Extracted pr_number: $PR_NUMBER"
+            echo "repo=$REPO" >> $GITHUB_OUTPUT
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
           fi
+          echo "=== END PR VARIABLES DEBUG ==="
 
       - name: Get PR files
         id: pr-files
         run: |
-          FILES=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ steps.pr-vars.outputs.repo }}/pulls/${{ steps.pr-vars.outputs.pr_number }}/files" | \
-            jq -r '[.[].filename] | @json')
-          if [ -z "$FILES" ]; then
+          echo "=== PR FILES DEBUG ==="
+          echo "Fetching files for repo: ${{ steps.pr-vars.outputs.repo }}"
+          echo "PR number: ${{ steps.pr-vars.outputs.pr_number }}"
+          API_URL="https://api.github.com/repos/${{ steps.pr-vars.outputs.repo }}/pulls/${{ steps.pr-vars.outputs.pr_number }}/files"
+          echo "API URL: $API_URL"
+          
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$API_URL")
+          echo "API Response length: ${#RESPONSE}"
+          echo "First 200 chars of response: ${RESPONSE:0:200}"
+          
+          FILES=$(echo "$RESPONSE" | jq -r '[.[].filename] | @json')
+          echo "Parsed files: $FILES"
+          
+          if [ -z "$FILES" ] || [ "$FILES" = "null" ]; then
             echo "Error: Failed to fetch or parse PR files."
+            echo "Full API response: $RESPONSE"
             exit 1
           fi
           echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "=== END PR FILES DEBUG ==="
 
       - name: Create Devin Review Session
         id: devin-review
@@ -132,25 +178,46 @@ jobs:
             ${{ steps.pr-files.outputs.files }}
         
         run: |
+          echo "=== DEVIN SESSION DEBUG ==="
+          echo "Files to review: $FILES_TO_REVIEW"
+          echo "API key present: $([ -n "$DEVIN_API_KEY" ] && echo 'true' || echo 'false')"
+          echo "Prompt length: ${#REVIEW_PROMPT}"
+          
           # Convert multiline string to JSON-safe format
+          echo "Converting prompt to JSON-safe format..."
           ESCAPED_PROMPT=$(echo "$REVIEW_PROMPT" | jq -Rs .)
+          echo "Escaped prompt length: ${#ESCAPED_PROMPT}"
+          
+          echo "Making API call to Devin..."
           RESPONSE=$(curl -s -X POST \
             -H "Authorization: Bearer $DEVIN_API_KEY" \
             -H "Content-Type: application/json" \
             -d "{\"prompt\": $ESCAPED_PROMPT}" \
             "https://api.devin.ai/v1/sessions")
+          
+          echo "API response length: ${#RESPONSE}"
+          echo "First 200 chars of response: ${RESPONSE:0:200}"
+          
           # Check for errors in the response
           ERROR_MSG=$(echo "$RESPONSE" | jq -r '.detail')
           if [ "$ERROR_MSG" != "null" ]; then
             echo "Error creating Devin session: $ERROR_MSG"
+            echo "Full response: $RESPONSE"
             exit 1
           fi
+          
           SESSION_ID=$(echo "$RESPONSE" | jq -r '.session_id')
           SESSION_URL=$(echo "$RESPONSE" | jq -r '.url')
+          echo "Extracted session_id: $SESSION_ID"
+          echo "Extracted session_url: $SESSION_URL"
+          
           if [ -z "$SESSION_ID" ] || [ -z "$SESSION_URL" ]; then
             echo "Error: Devin session details are missing from the response."
+            echo "Full response: $RESPONSE"
             exit 1
           fi
+          
           echo "session-id=$SESSION_ID" >> $GITHUB_OUTPUT
           echo "session-url=$SESSION_URL" >> $GITHUB_OUTPUT
           echo "Devin session created successfully: $RESPONSE"
+          echo "=== END DEVIN SESSION DEBUG ==="
