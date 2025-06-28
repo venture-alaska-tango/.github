@@ -4,7 +4,7 @@ This directory contains GitHub Actions workflows for organization-wide deploymen
 
 ## Files
 
-- `devin-pr-review.yml` - Automated Devin PR review workflow template
+This directory contains documentation for organization-wide GitHub Actions workflows deployed via workflow templates.
 
 ## Devin PR Review Workflow
 
@@ -64,3 +64,10 @@ curl -X POST \
 - `event_type`: Must be `devin-pr-review` to trigger this workflow
 - `client_payload.repo`: Target repository in `owner/repo` format
 - `client_payload.pr_number`: Pull request number to review
+
+### .github Repository PR Reviews
+PRs in the `.github` repository are reviewed using the repository_dispatch mechanism. The workflow template automatically handles PRs in all other organization repositories via the standard pull_request trigger.
+
+To manually trigger a review for a .github repository PR, use the repository_dispatch API call documented above with:
+- `repo`: `venture-alaska-tango/.github`
+- `pr_number`: The PR number to review
