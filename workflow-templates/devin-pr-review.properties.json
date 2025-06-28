@@ -1,0 +1,7 @@
+{
+  "name": "Devin PR Review",
+  "description": "Automated Devin AI code review workflow with inline comments and suggestions",
+  "iconName": "octicon code-review",
+  "categories": ["Automation", "Code Quality"],
+  "filePatterns": [".*"]
+}
