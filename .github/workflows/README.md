@@ -5,6 +5,7 @@ This directory contains GitHub Actions workflows for organization-wide deploymen
 ## Files
 
 - `codeql.yml` - Minimal workflow to support CodeQL analysis of GitHub Actions code
+- `devin-pr-review.yml` - Minimal workflow to handle repository_dispatch events for .github repo PR reviews
 - This directory contains documentation for organization-wide GitHub Actions workflows deployed via workflow templates.
 
 ## Devin PR Review Workflow
