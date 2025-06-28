@@ -4,7 +4,8 @@ This directory contains GitHub Actions workflows for organization-wide deploymen
 
 ## Files
 
-This directory contains documentation for organization-wide GitHub Actions workflows deployed via workflow templates.
+- `codeql.yml` - Minimal workflow to support CodeQL analysis of GitHub Actions code
+- This directory contains documentation for organization-wide GitHub Actions workflows deployed via workflow templates.
 
 ## Devin PR Review Workflow
 
@@ -71,3 +72,6 @@ PRs in the `.github` repository are reviewed using the repository_dispatch mecha
 To manually trigger a review for a .github repository PR, use the repository_dispatch API call documented above with:
 - `repo`: `venture-alaska-tango/.github`
 - `pr_number`: The PR number to review
+
+### CodeQL Analysis Support
+The `codeql.yml` workflow exists solely to provide analyzable GitHub Actions code for CodeQL security analysis. It does not duplicate any functionality from the workflow template and serves only as a minimal workflow file to satisfy CodeQL's requirement for GitHub Actions code presence in the repository.
