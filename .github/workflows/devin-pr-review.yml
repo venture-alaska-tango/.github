@@ -19,11 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'repository_dispatch' || (github.event_name != 'repository_dispatch' && github.repository != 'venture-alaska-tango/.github')
     steps:
-      - name: Debug workflow startup
-        run: |
-          echo "Workflow started successfully"
-          echo "Event: ${{ github.event_name }}"
-          echo "Repository: ${{ github.repository }}"
+      - name: Test minimal step
+        run: echo "Minimal test step executed successfully"
 
       - name: Checkout code
         uses: actions/checkout@v4
