@@ -21,19 +21,9 @@ jobs:
     steps:
       - name: Debug workflow startup
         run: |
-          echo "=== WORKFLOW STARTUP DEBUG ==="
-          echo "Event name: ${{ github.event_name }}"
+          echo "Workflow started successfully"
+          echo "Event: ${{ github.event_name }}"
           echo "Repository: ${{ github.repository }}"
-          echo "Conditional check result: ${{ github.event_name == 'repository_dispatch' || (github.event_name != 'repository_dispatch' && github.repository != 'venture-alaska-tango/.github') }}"
-          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            echo "Repository dispatch event detected"
-            echo "Client payload repo: ${{ github.event.client_payload.repo }}"
-            echo "Client payload pr_number: ${{ github.event.client_payload.pr_number }}"
-          else
-            echo "Regular PR event detected"
-            echo "PR number: ${{ github.event.pull_request.number }}"
-          fi
-          echo "=== END STARTUP DEBUG ==="
 
       - name: Checkout code
         uses: actions/checkout@v4
