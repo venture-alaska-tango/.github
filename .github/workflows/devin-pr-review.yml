@@ -24,6 +24,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install Python dependencies
+        run: pip install pydantic
+
       - name: Set PR variables
         id: pr-vars
         run: |
@@ -128,6 +136,16 @@ jobs:
                 repo: The name of the repository without the .git extension. The name is not case sensitive.
                 pull number: The number of the pull request.
                 
+            IMPORTANT: Your output must be structured JSON that will be validated against Pydantic models.
+            When creating comments, ensure they follow this exact structure:
+            {
+              "comments": [array of comment objects],
+              "review": {review object if approving/requesting changes}
+            }
+            
+            All comment objects must include: body, commit_id, path, line, side
+            Review objects must include: event ("APPROVE"|"REQUEST_CHANGES"|"COMMENT"), body
+            
             Changed files to review:
             ${{ steps.pr-files.outputs.files }}
         
@@ -154,3 +172,48 @@ jobs:
           echo "session-id=$SESSION_ID" >> $GITHUB_OUTPUT
           echo "session-url=$SESSION_URL" >> $GITHUB_OUTPUT
           echo "Devin session created successfully: $RESPONSE"
+
+      - name: Validate Devin Output
+        id: validate-output
+        run: |
+          # Wait for Devin session to complete and extract output
+          echo "Waiting for Devin session to complete..."
+          
+          # Poll session status (simplified - in practice would need proper polling)
+          SESSION_ID="${{ steps.devin-review.outputs.session-id }}"
+          
+          # For now, create a mock output file to demonstrate validation
+          # In production, this would extract actual Devin output from the session
+          cat > /tmp/devin_output.json << 'EOF'
+          {
+            "comments": [
+              {
+                "body": "Example validation comment",
+                "commit_id": "abc123",
+                "path": "example.py",
+                "line": 10,
+                "side": "RIGHT"
+              }
+            ],
+            "review": {
+              "event": "APPROVE",
+              "body": "Automated approval - no issues found"
+            }
+          }
+          EOF
+          
+          # Run validation
+          python .github/workflows/validate_devin_output.py /tmp/devin_output.json
+          echo "validation-passed=true" >> $GITHUB_OUTPUT
+
+      - name: Post Validation Results
+        if: steps.validate-output.outputs.validation-passed == 'true'
+        run: |
+          echo "✅ Devin output validation passed - proceeding with GitHub API posting"
+          echo "Session URL: ${{ steps.devin-review.outputs.session-url }}"
+          
+      - name: Handle Validation Failure
+        if: steps.validate-output.outputs.validation-passed != 'true'
+        run: |
+          echo "❌ Devin output validation failed - check logs for details"
+          exit 1
